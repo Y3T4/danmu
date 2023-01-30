@@ -1,0 +1,129 @@
+<!--作者：natural_live 时间：2017-7-30 -->
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="Generator" content="EditPlus®">
+    <meta name="Author" content="natural_live">
+    <meta name="Keywords" content="barrage">
+    <meta name="Description" content="">
+    <title>弹幕</title>
+    <style>
+        #barrage {
+            margin: auto;
+            margin-top: 50px;
+            position: relative;
+            width: 800px;
+            height: 400px;
+            background: #fff;
+            border: 2px solid #ffcc00;
+        }
+
+        #barrage div {
+            width: 100%;
+            height: 20px;
+            line-height: 20px;
+            position: absolute;
+        }
+
+        #iup {
+            width: 200px;
+            height: 20px;
+            border-radius: 5px;
+            margin-top: 375px;
+            position: absolute;
+            margin-left: 100px;
+        }
+
+        #but {
+            width: 50px;
+            height: 25px;
+            margin-top: 375px;
+            position: absolute;
+            margin-left: 305px;
+            border-radius: 5px;
+            background-color: rgb(205, 205, 214);
+        }
+    </style>
+</head>
+
+<body>
+    <div id="barrage">
+        <input id="iup" type="text" placeholder="               输入弹幕">
+        <button id="but" onclick="fun()">发送</button>
+    </div>
+
+    <script>
+
+        var current = new Array();//存储当前输入框的内容
+        var newarr = [];//存储每个弹幕距左边框的距离
+        var flag = 0;//标志量
+        let bar = document.getElementById("barrage")
+        var num = new Array();//数组，用来存储划分每个块的序号
+        var words = ["富强", "民主", "文明", "和谐", "自由", "平等", "公正", "法治", "爱国", "敬业", "诚信", "友善"];
+        //    产生50条弹幕
+        for (i = 0; i < 50; i++) {
+            current[i] = words[random(0, 11)]
+        }
+        for (var i = 0; i < bar.offsetHeight / 20 - 1; i++) {
+            num.splice(i, 0, i);//将整个显示框划分成多个块，并对每个块进行标号
+        }
+
+        function create() {
+            if (flag < current.length) {
+                var node = document.createElement("div");//创建一个div元素，用来存储弹幕的信息
+                node.innerHTML = current[flag];
+                flag++;
+                var t = random(0, num.length - 1);
+                node.style.top = num[t] * 20 + "px";//从划分的块中随机一块。
+                node.style.left = "800px";
+                node.style.color = "#" + randomColor();//随机颜色
+                bar.appendChild(node);//插入子节点
+            }
+        }
+
+        function move() {
+            var arr = bar.getElementsByTagName("div");//获取所有的弹幕
+            for (var i = 0; i < arr.length; i++) {
+                newarr.push(arr[i].offsetLeft);//将每个弹幕距左边边框的距离分别存储在newarr数组中
+                arr[i].style.left = newarr[i] + "px";//更新距离
+                newarr[i] = newarr[i] - 2;//每次减少2px
+                if (newarr[i] < 0) {
+                    arr[i].parentNode.removeChild(arr[i])//删除这个div
+                    newarr.splice(i, 1)//同步去除对应的边距
+                }
+            }
+        }
+
+
+        function randomColor() {//随机颜色
+            var color = Math.ceil(Math.random() * 16777215).toString(16);
+            while (color.length < 6) {
+                color = "0" + color;
+            }
+            return color;
+        }
+
+        function random(m, n) {//随机在m、n之间的整数
+            return Math.round(Math.random() * (n - m)) + m;
+        }
+        setInterval(create,
+            40 * random(10, 100))//给弹幕随机加一个延迟
+        setInterval(move, 20);//开启定时器
+
+    </script>
+    <script>
+        function fun() {
+            var newdanmu = document.getElementById("iup")
+            if (newdanmu.value != "") {
+                // 在中间添加为了实时显示，也可以单独写一个函数
+                current.splice(flag, 0, newdanmu.value)
+                create()
+                newdanmu.value = ""
+            }
+        }
+    </script>
+</body>
+
+</html>
